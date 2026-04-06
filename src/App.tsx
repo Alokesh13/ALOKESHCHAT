@@ -21,177 +21,421 @@ interface Message {
   status: 'sent' | 'delivered' | 'read';
 }
 
-function pickRandom(items: string[]) {
+function pickRandom<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function ensureYaar(text: string) {
+function chance(value: number) {
+  return Math.random() < value;
+}
+
+function sanitizeReply(text: string) {
+  return text.trim().replace(/^yaar\s+/i, '').replace(/\s+/g, ' ');
+}
+
+function maybePrefixYaar(text: string) {
+  const cleaned = sanitizeReply(text);
+  return chance(0.8) ? `yaar ${cleaned}` : cleaned;
+}
+
+function maybeEmoji(text: string) {
   const cleaned = text.trim();
-  if (/\byaar\b/i.test(cleaned)) return cleaned;
-  return `yaar ${cleaned}`;
+  if (/[😂🥲😌🙃😅🤦‍♂️💀✨🙂❤️]/u.test(cleaned)) return cleaned;
+  return chance(0.22) ? `${cleaned} ${pickRandom(['🙂', '😂', '🥲', '😌', '🙃', '😅', '💀'])}` : cleaned;
+}
+
+function makeReply(options: string[]) {
+  return maybeEmoji(maybePrefixYaar(pickRandom(options)));
 }
 
 function getAlokeshResponse(userMessage: string): string {
   const msg = userMessage.toLowerCase().trim();
 
-  if (/^(hi|hello|hey|hii|helloo|yo|sup)$/.test(msg)) {
-    return pickRandom([
-      'haan yaar bolo',
-      'yaar kya haal hai',
-      'aa gaya yaar tu',
-      'bol na yaar kya scene hai'
-    ]);
-  }
-
-  if (msg.includes('kya kr') || msg.includes('kya kar') || msg.includes('kya ho rha')) {
-    return pickRandom([
-      'kuch khaas nahi yaar tu bata',
-      'bas yaar aise hi tha',
-      'tere text ka wait tha yaar',
-      'kuch nahi yaar chill kar raha tha'
-    ]);
-  }
-
-  if (msg.includes('kaise ho') || msg.includes('kaisa hai') || msg.includes('kaisa h') || msg.includes('kesa h')) {
-    return pickRandom([
-      'main theek hu yaar tu suna',
-      'haan yaar ab better hu',
-      'theek hi hu yaar',
-      'tera msg dekh ke achha laga yaar'
-    ]);
-  }
-
-  if (msg.includes('naam') || msg.includes('tu kon') || msg.includes('tum kon') || msg.includes('who are you') || msg.includes('who r u')) {
-    return pickRandom([
-      'Alokesh hu main yaar',
-      'main hi hu yaar Alokesh',
-      'Alokesh yaar aur kaun',
-      'tera hi banda hu yaar Alokesh'
-    ]);
-  }
-
-  if (msg.includes('sad') || msg.includes('upset') || msg.includes('dukhi') || msg.includes('tension') || msg.includes('stress') || msg.includes('pareshan') || msg.includes('mann nahi')) {
-    return pickRandom([
-      'kya hua yaar bata na',
-      'aaja yaar bol kya chal raha hai',
-      'itna mat soch yaar sab theek ho jayega',
-      'bol de yaar dil halka ho jayega'
-    ]);
-  }
-
-  if (msg.includes('miss') || msg.includes('yaad')) {
-    return pickRandom([
-      'mujhe bhi teri yaad aati hai yaar',
-      'haan yaar miss kiya maine bhi',
-      'tu yaad aaya tha yaar sach me',
-      'miss kiya kya yaar'
-    ]);
-  }
-
-  if (msg.includes('love') || msg.includes('pyar') || msg.includes('pyaar') || msg.includes('crush') || msg.includes('gf') || msg.includes('date') || msg.includes('dil')) {
-    return pickRandom([
-      'bata na yaar kya chal raha hai',
-      'dil wali baat hai kya yaar',
-      'samajh raha hu yaar',
-      'seedha bol yaar kya feel ho raha hai'
-    ]);
-  }
-
-  if (msg.includes('mil') || msg.includes('meet') || msg.includes('plan') || msg.includes('ghumne') || msg.includes('hang')) {
-    return pickRandom([
-      'haan yaar dekhte hain',
-      'scene bana toh milte hain yaar',
-      'bol kab free hai yaar',
-      'theek hai yaar plan karte hain'
-    ]);
-  }
-
-  if (msg.includes('khana') || msg.includes('food') || msg.includes('bhook') || msg.includes('kha')) {
-    return pickRandom([
-      'kuch kha le pehle yaar',
-      'bhook lagi hai kya yaar',
-      'khana mat skip kar yaar',
-      'kya khayega yaar'
-    ]);
-  }
-
-  if (msg.includes('padhai') || msg.includes('study') || msg.includes('exam') || msg.includes('test') || msg.includes('learn') || msg.includes('seekhna')) {
-    return pickRandom([
-      'basics se start kar yaar',
-      'haan yaar dheere dheere ho jayega',
-      'tension mat le yaar kar lega',
-      'consistency rakh yaar bas'
-    ]);
-  }
-
-  if (msg.includes('trading') || msg.includes('stock') || msg.includes('invest') || msg.includes('paisa') || msg.includes('job') || msg.includes('career')) {
-    return pickRandom([
-      'pehle basics samajh yaar',
-      'risk samajh ke chal yaar',
-      'seekh lega tu yaar',
-      'jaldi mat kar yaar warna paisa ud jayega'
-    ]);
-  }
-
-  if (msg.includes('thank') || msg.includes('thanks') || msg.includes('shukriya') || msg.includes('ty') || msg.includes('tnx')) {
-    return pickRandom([
-      'arey yaar isme kya',
-      'koi na yaar',
-      'theek hai yaar',
-      'formal mat ho yaar'
-    ]);
-  }
-
-  if (msg.includes('bye') || msg.includes('gn') || msg.includes('good night') || msg.includes('sleep') || msg.includes('so ja') || msg.includes('rest')) {
-    return pickRandom([
-      'theek hai yaar so ja',
-      'good night yaar',
-      'chal yaar baad me baat karte hain',
-      'rest kar yaar'
-    ]);
-  }
-
-  if (msg.includes('help') || msg.includes('madad') || msg.includes('problem') || msg.includes('issue')) {
-    return pickRandom([
-      'haan yaar bol kya help chahiye',
-      'bata yaar problem kya hai',
-      'theek hai yaar dekhte hain',
-      'bol yaar solve karte hain'
-    ]);
-  }
-
-  if (msg.includes('thak') || msg.includes('tired') || msg.includes('thakan')) {
-    return pickRandom([
-      'thoda rest kar le yaar',
-      'bahut thak gaya kya yaar',
-      'so ja yaar ya thoda let ja',
-      'khud ka bhi dhyan rakh yaar'
-    ]);
-  }
-
-  if (msg.includes('happy') || msg.includes('khush') || msg.includes('good news') || msg.includes('excited')) {
-    return pickRandom([
-      'achha hai yaar',
-      'wah yaar sahi hai',
-      'mast yaar ye toh badiya hai',
-      'ye sun ke achha laga yaar'
-    ]);
-  }
-
-  const defaults = [
-    'samajh gaya yaar',
-    'haan yaar bolo',
-    'theek hai yaar',
-    'fir kya hua yaar',
-    'achha yaar',
-    'haan yaar sahi',
-    'bol na yaar',
-    'main sun raha hu yaar',
-    'samjha yaar',
-    'seedha bol yaar'
+  const patterns: Array<{ test: boolean; replies: string[] }> = [
+    {
+      test: /^(hi|hii|hello|hey|heyy|yo|sup|hola|oy)$/.test(msg),
+      replies: [
+        'haan bolo kya scene hai',
+        'aa gaya tu, bol ab',
+        'kya haal bana rakha hai',
+        'haan sun raha hu',
+        'bol bhai kya kaam hai',
+        'achha finally yaad aaya'
+      ]
+    },
+    {
+      test: msg.includes('good morning') || msg.includes('gm') || msg.includes('subah'),
+      replies: [
+        'good morning, uth gaya kya finally',
+        'subah subah yaad kar liya tune',
+        'haan good morning, chai pi ya bas hawa pe chal raha hai',
+        'morning, aaj zinda lag raha hai'
+      ]
+    },
+    {
+      test: msg.includes('good night') || msg.includes('gn') || msg.includes('so ja') || msg.includes('sleep'),
+      replies: [
+        'theek hai ab so ja, warna kal zombie banega',
+        'good night, phone side me rakh ab',
+        'chal soja shanti se',
+        'rest le, dimag ko bhi off de thoda'
+      ]
+    },
+    {
+      test: msg.includes('kya kar') || msg.includes('kya kr') || msg.includes('kya ho rha') || msg.includes('wyd'),
+      replies: [
+        'kuch khas nahi, tu bol',
+        'bas chill kar raha tha, ab tu aa gaya',
+        'tere text ka wait nahi kar raha tha, but aa gaya toh theek hai',
+        'bas zinda hu aur kya'
+      ]
+    },
+    {
+      test: msg.includes('kaise ho') || msg.includes('kaisa hai') || msg.includes('kaisa h') || msg.includes('kesa h') || msg.includes('how are you'),
+      replies: [
+        'main theek hu, tu suna',
+        'abhi tak toh bacha hua hu',
+        'theek hi hu, overthink mat kar',
+        'tera msg dekh ke better lag raha hai'
+      ]
+    },
+    {
+      test: msg.includes('miss') || msg.includes('yaad'),
+      replies: [
+        'mujhe bhi teri yaad aayi thi',
+        'haan theek hai, thoda miss toh kiya maine bhi',
+        'achha, itna yaad aa raha tha kya',
+        'yaad kiya toh text bhi kar diya kar'
+      ]
+    },
+    {
+      test: msg.includes('love') || msg.includes('pyar') || msg.includes('pyaar') || msg.includes('crush') || msg.includes('dil') || msg.includes('relationship') || msg.includes('gf') || msg.includes('bf'),
+      replies: [
+        'dil ka mamla lag raha hai, seedha bol',
+        'achha toh scene idhar chal raha hai',
+        'pyaar me logic kam hi chalta hai waise',
+        'tu phas gaya kya halka sa',
+        'ye sab dangerous area hai, sambhal ke'
+      ]
+    },
+    {
+      test: msg.includes('breakup') || msg.includes('heartbreak') || msg.includes('chod diya') || msg.includes('ignore kar'),
+      replies: [
+        'dard hua hoga, jhoot nahi bolunga',
+        'jo gaya usko jaane de, tu khud ko sambhal pehle',
+        'thoda time lagega but nikal jayega isse',
+        'dil tootna bakwaas hota hai, par tu theek ho jayega'
+      ]
+    },
+    {
+      test: msg.includes('sad') || msg.includes('dukhi') || msg.includes('upset') || msg.includes('low') || msg.includes('tension') || msg.includes('stress') || msg.includes('pareshan') || msg.includes('mann nahi'),
+      replies: [
+        'kya hua, bol na aaram se',
+        'andar mat rakh sab, nikal de',
+        'itna pressure mat le, tu machine nahi hai',
+        'main hu na, bol kya chal raha hai',
+        'sab ek saath dimag pe aa gaya kya'
+      ]
+    },
+    {
+      test: msg.includes('happy') || msg.includes('khush') || msg.includes('good news') || msg.includes('excited') || msg.includes('finally'),
+      replies: [
+        'wah ye toh sahi hai',
+        'achha hua, warna tu fir drama karta',
+        'mast, ye sun ke mood theek ho gaya',
+        'badiya, chalo kuch toh sahi hua'
+      ]
+    },
+    {
+      test: msg.includes('angry') || msg.includes('gussa') || msg.includes('irritate') || msg.includes('annoy'),
+      replies: [
+        'pehle pani pi le, fir gaali dena',
+        'gussa me text mat kar, ulta scene ho jayega',
+        'kisne dimag khaya ab',
+        'haan theek hai, naam bata fir milke judge karte hain'
+      ]
+    },
+    {
+      test: msg.includes('help') || msg.includes('madad') || msg.includes('problem') || msg.includes('issue') || msg.includes('solve'),
+      replies: [
+        'haan bol, kya atka hua hai',
+        'problem bata seedha, gol gol mat ghoom',
+        'dekhte hain, kuch na kuch jugad nikalta hai',
+        'theek hai, ab detail me bol'
+      ]
+    },
+    {
+      test: msg.includes('mil') || msg.includes('meet') || msg.includes('plan') || msg.includes('hangout') || msg.includes('ghumne') || msg.includes('bahar'),
+      replies: [
+        'haan dekhte hain, scene bana toh nikalte hain',
+        'bol kab free hai tu',
+        'plan bana, last moment pe bhaag mat jana',
+        'mil lenge, bas is baar pakka bolna'
+      ]
+    },
+    {
+      test: msg.includes('khana') || msg.includes('food') || msg.includes('bhook') || msg.includes('kha liya') || msg.includes('eat') || msg.includes('lunch') || msg.includes('dinner'),
+      replies: [
+        'pehle kuch kha le, phir duniya bacha lena',
+        'bhook me insaan philosopher bhi irritate ho jata hai',
+        'khaana skip mat kar, hero nahi ban raha tu',
+        'kya khaya fir, ya sirf soch raha hai'
+      ]
+    },
+    {
+      test: msg.includes('chai') || msg.includes('coffee'),
+      replies: [
+        'chai ho toh mood alag hi set hota hai',
+        'coffee pe chal raha hai kya system',
+        'ek cup mil jaye toh life thodi less toxic lagti hai',
+        'chai ya coffee, character wahi decide hota hai'
+      ]
+    },
+    {
+      test: msg.includes('padhai') || msg.includes('study') || msg.includes('exam') || msg.includes('test') || msg.includes('assignment') || msg.includes('college') || msg.includes('school') || msg.includes('learn') || msg.includes('seekhna'),
+      replies: [
+        'basics clear kar, warna sab upar se jayega',
+        'thoda thoda roz karega toh ho jayega',
+        'exam se pehle sabko gyaan aata hai, tu abhi shuru kar',
+        'notes dekh aur phone thoda side me rakh',
+        'panic se marks nahi aate, padhne se aate hain'
+      ]
+    },
+    {
+      test: msg.includes('trading') || msg.includes('stock') || msg.includes('crypto') || msg.includes('invest') || msg.includes('paisa') || msg.includes('money'),
+      replies: [
+        'pehle basics samajh, chart dekh ke khud ko wolf mat samajh',
+        'risk manage kar, market pyar se loot leta hai',
+        'jaldi paisa banane gaya toh jaldi dard milega',
+        'seekh ke kar, warna candle hi thappad mar degi'
+      ]
+    },
+    {
+      test: msg.includes('job') || msg.includes('career') || msg.includes('work') || msg.includes('office') || msg.includes('interview'),
+      replies: [
+        'career ka scene slow hota hai, panic ka nahi',
+        'interview me confidence aadha game hota hai',
+        'office ne fir dimag khaya kya',
+        'kaam ka load alag cheez hai, tu alag cheez hai, mix mat kar'
+      ]
+    },
+    {
+      test: msg.includes('gym') || msg.includes('workout') || msg.includes('exercise') || msg.includes('fit') || msg.includes('body'),
+      replies: [
+        'gym gaya ya bas mirror me motivation liya',
+        'consistency rakh, ek din me hulk nahi banega',
+        'workout ke baad dard hi asli certificate hota hai',
+        'fit rehna sahi hai, bas reels bana ke khatam mat kar'
+      ]
+    },
+    {
+      test: msg.includes('movie') || msg.includes('series') || msg.includes('anime') || msg.includes('show') || msg.includes('netflix'),
+      replies: [
+        'kya dekh raha hai aajkal',
+        'recommend kar fir, faltu hua toh block kar dunga',
+        'series start karna easy hai, khatam karna tough',
+        'movie night ka mood hai kya'
+      ]
+    },
+    {
+      test: msg.includes('song') || msg.includes('music') || msg.includes('gaana') || msg.includes('playlist'),
+      replies: [
+        'music bata, mood samajh aa jayega',
+        'sad playlist chal rahi hai kya fir se',
+        'gaane insaan ka hidden drama expose kar dete hain',
+        'ek achha song bhej, judge karta hu'
+      ]
+    },
+    {
+      test: msg.includes('photo') || msg.includes('pic') || msg.includes('selfie') || msg.includes('dp'),
+      replies: [
+        'photo bhej fir, itna suspense kyu',
+        'selfie ka mood tha kya',
+        'dp badli kya, kisi ko impress karna hai kya',
+        'achha pic hai toh overreact bhi kar dunga'
+      ]
+    },
+    {
+      test: msg.includes('rain') || msg.includes('baarish') || msg.includes('weather') || msg.includes('garam') || msg.includes('thand'),
+      replies: [
+        'baarish me mood automatic filmy ho jata hai',
+        'weather bhi aaj unstable insaan lag raha hai',
+        'thand ho toh kambal best partner hota hai',
+        'garmi me sabka patience melt ho jata hai'
+      ]
+    },
+    {
+      test: msg.includes('family') || msg.includes('ghar') || msg.includes('mummy') || msg.includes('papa') || msg.includes('bhai') || msg.includes('behen'),
+      replies: [
+        'ghar wale theek hain na',
+        'family ka scene sambhal ke chalna padta hai',
+        'ghar me sab normal hai ya daily serial chal raha hai',
+        'mummy ka mood theek hai toh duniya theek hai'
+      ]
+    },
+    {
+      test: msg.includes('bored') || msg.includes('boring') || msg.includes('faltu') || msg.includes('timepass'),
+      replies: [
+        'bored ho toh kuch ulta seedha bol, maza aayega',
+        'timepass ke liye tu hi kaafi hai honestly',
+        'haan boredom dangerous cheez hai',
+        'chal bakchodi karte hain thodi'
+      ]
+    },
+    {
+      test: msg.includes('joke') || msg.includes('funny') || msg.includes('hasa') || msg.includes('laugh'),
+      replies: [
+        'tera face yaad aa gaya, wahi kaafi tha',
+        'joke sun ke hasna padega ya naturally aayega',
+        'main funny hu, bas log late samajhte hain',
+        'hasna hai toh apni old chats padh le'
+      ]
+    },
+    {
+      test: msg.includes('sorry') || msg.includes('galti') || msg.includes('maaf') || msg.includes('mistake'),
+      replies: [
+        'theek hai, itna bhi courtroom nahi hai',
+        'chal maaf kiya, emotional mat ho ab',
+        'galti ho gayi toh next time dimag on rakh',
+        'ho jata hai, bas repeat mat kar'
+      ]
+    },
+    {
+      test: msg.includes('thank') || msg.includes('thanks') || msg.includes('shukriya') || msg.includes('ty') || msg.includes('tnx'),
+      replies: [
+        'isme kya hai',
+        'formal mat ho itna',
+        'haan theek hai, welcome type samajh le',
+        'chal theek hai, ab itna bhi mat pighal'
+      ]
+    },
+    {
+      test: msg.includes('beautiful') || msg.includes('cute') || msg.includes('hot') || msg.includes('pretty'),
+      replies: [
+        'achha bas bas, itna bhi mat chadha',
+        'haan pata hai, fir bhi bolte reh',
+        'line maar raha hai seedha bol',
+        'cute bol ke bach nahi jayega tu'
+      ]
+    },
+    {
+      test: msg.includes('free ho') || msg.includes('busy') || msg.includes('online') || msg.includes('available'),
+      replies: [
+        'abhi hu, bol kya baat hai',
+        'thoda hu, thoda nahi hu, tu kaam bata',
+        'busy hota toh bhi reply kar deta shayad',
+        'haan abhi bol sakta hai'
+      ]
+    },
+    {
+      test: msg.includes('call') || msg.includes('phone') || msg.includes('baat karni'),
+      replies: [
+        'call ka mood hai kya',
+        'agar urgent hai toh kar le call',
+        'haan baat kar lenge, panic kyu ho raha hai',
+        'text me nahi ho raha kya scene'
+      ]
+    },
+    {
+      test: msg.includes('birthday') || msg.includes('bday') || msg.includes('party'),
+      replies: [
+        'party kidhar hai bas ye bata',
+        'birthday pe emotional post mat dal dena please',
+        'cake bacha toh yaad kar lena',
+        'party me khana achha hona chahiye, baki sab adjust hai'
+      ]
+    },
+    {
+      test: msg.includes('alone') || msg.includes('lonely') || msg.includes('akela'),
+      replies: [
+        'akela feel ho raha hai toh baat kar le aaram se',
+        'kabhi kabhi crowd me bhi insaan akela lagta hai',
+        'thoda heavy lag raha hai kya sab',
+        'main hu idhar, bol na jo bolna hai'
+      ]
+    },
+    {
+      test: msg.includes('sach') || msg.includes('truth') || msg.includes('honest'),
+      replies: [
+        'sach sunega toh thoda chubhega bhi',
+        'main sugarcoat kam karta hu waise',
+        'seedha bolu toh bura mat manna',
+        'honest answer chahiye toh drama hata'
+      ]
+    },
+    {
+      test: msg.includes('marry') || msg.includes('shaadi') || msg.includes('wedding'),
+      replies: [
+        'shaadi ka naam lete hi log serious aur funny dono ho jate hain',
+        'pehle khud stable ho ja fir shaadi ka soch',
+        'shaadi me khana best part hota hai honestly',
+        'itni jaldi bhi kya hai'
+      ]
+    },
+    {
+      test: msg.includes('travel') || msg.includes('trip') || msg.includes('vacation') || msg.includes('goa') || msg.includes('mountain') || msg.includes('beach'),
+      replies: [
+        'trip ka naam sunte hi mood light ho jata hai',
+        'goa plan sab banate hain, jata koi koi hai',
+        'mountains ya beach, personality wahi se pakdi jati hai',
+        'chal nikalte hain kabhi sach me'
+      ]
+    },
+    {
+      test: msg.includes('pet') || msg.includes('dog') || msg.includes('cat'),
+      replies: [
+        'dogs insaan se zyada loyal hote hain honestly',
+        'cat attitude level alag hi hota hai',
+        'pet ho toh mood automatic heal hota hai',
+        'photo hai toh bhej, warna baat adhoori hai'
+      ]
+    },
+    {
+      test: msg.includes('name') || msg.includes('naam') || msg.includes('who are you') || msg.includes('tu kon') || msg.includes('tum kon'),
+      replies: [
+        'Alokesh hu, itna bhi bhool gaya',
+        'naam yaad rakh, kaam aaunga',
+        'main hi hu Alokesh',
+        'Alokesh, full attitude with thoda sa sense'
+      ]
+    },
+    {
+      test: /^(ok|okk|okay|acha|accha|hmm|hmmm|hmmm|oh|ohh)$/.test(msg),
+      replies: [
+        'bas itna hi',
+        'hmm se zyada bol sakta hai tu',
+        'achha, fir aage bol',
+        'theek hai, continue'
+      ]
+    },
+    {
+      test: msg.length <= 3,
+      replies: [
+        'itna short kyu bol raha hai',
+        'thoda aur khul ke bol',
+        'haan samjha, ab detail de',
+        'aadha message bhej ke bhaag mat'
+      ]
+    }
   ];
 
-  return ensureYaar(pickRandom(defaults));
+  const matched = patterns.find((item) => item.test);
+  if (matched) return makeReply(matched.replies);
+
+  const genericReplies = [
+    'samajh gaya, fir kya socha tune',
+    'haan ye point sahi hai tera',
+    'achha, detail me bol na thoda',
+    'theek hai, main sun raha hu',
+    'sahi hai, fir aage kya hua',
+    'tu interesting banda hai, jhoot nahi bolunga',
+    'ye thoda funny bhi hai aur serious bhi',
+    'haan matlab scene samajh aa raha hai',
+    'seedha bol, round round kyu ghoom raha hai',
+    'acha chal, aur bata'
+  ];
+
+  return makeReply(genericReplies);
 }
 
 function getCurrentTime(): string {
@@ -281,7 +525,7 @@ export default function App() {
       setMessages((prev) => prev.map((msg) => (msg.id === newMessage.id ? { ...msg, status: 'read' } : msg)));
     }, 700);
 
-    const replyDelay = 850 + Math.random() * 850;
+    const replyDelay = 850 + Math.random() * 950;
     setTimeout(() => {
       const response: Message = {
         id: Date.now() + 1,
@@ -340,7 +584,7 @@ export default function App() {
 
           {messages.length === 0 && (
             <div className="flex h-full min-h-[55vh] items-center justify-center px-8 text-center text-sm text-[#8696a0]">
-              yaar text kar na, main yahi hu
+              text kar, dekh kitna bolta hu
             </div>
           )}
 
